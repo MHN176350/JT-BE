@@ -25,12 +25,13 @@ namespace BE.Controllers
         {
             return importServices.GetImportbyWarehouse(id);
         }
-        [HttpGet("importDetail")]
+        [HttpGet("importDetail/{id}")]
 
 
         public Task<IActionResult> GetImportDetail(int id)
         {
             return importServices.GetImportDetail(id);
         }
+
     }
 }

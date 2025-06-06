@@ -17,6 +17,10 @@ namespace BE.DAO
         
         internal bool CreateStorage(string location, string code, int usId)
         {
+            if(_context.Storages.Any(x => x.Code == code))
+            {
+                return false; 
+            }
             Storage storage = new Storage
             {
                 Location = location,

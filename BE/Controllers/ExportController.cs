@@ -26,7 +26,7 @@ namespace BE.Controllers
         {
             return await _export.GetExportByWarehouseId(id);
         }
-        [HttpGet("exportDetail")]
+        [HttpGet("exportDetail/{id}")]
         public async Task<IActionResult> GetExportDetail(int id)
         {
             return await _export.GetExportDetail(id);

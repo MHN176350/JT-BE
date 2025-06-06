@@ -16,7 +16,7 @@ namespace BE.Services.Impl
 
         public async Task<IActionResult> CreateProductAsync(CreateProductRequest request)
         {
-            if (request.Code == null || request.Name == null || request.Price <= 0 || request.CatId <= 0)
+            if (request.Code == null || request.Name == null || request.CatId <= 0)
             { 
                 return new OkObjectResult(new ResponseFormat
                 {

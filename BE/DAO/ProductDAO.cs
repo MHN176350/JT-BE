@@ -15,6 +15,8 @@ namespace BE.DAO
         }
         public bool CreateProduct(CreateProductRequest product)
         {
+            if(_context.Products.Any(p => p.Code == product.Code))
+                return false;   
             Product pd= new Product
             {
                 Name = product.Name,

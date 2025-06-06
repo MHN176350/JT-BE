@@ -1,6 +1,7 @@
 ﻿    using BE.Context;
     using BE.Models.DTO.Request;
-    using BE.Models.Entities;
+using BE.Models.DTO.Response;
+using BE.Models.Entities;
     using BE.Services.Interfaces;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Storage;
@@ -125,15 +126,16 @@ namespace BE.DAO
                   .Include(x => x.Item)
                   .ThenInclude(x => x.Product)
                   .Where(x => x.InvoiceId == id)
-                  .Select(x => new
+                  .Select(x => new ImportDetailResponse
                   {
-                      x.Id,
-                      ProductCode = x.Item.Product.Code,
-                      ProductName = x.Item.Product.Name,
-                      x.Item.Quantity,
-                      x.Total,
+                      Id = x.Id,
+                    ItemName = x.Item.Product.Name,
+                    ItemCode = x.Item.Product.Code,
+                      UnitPrice = x.UnitPrice,
+                     Quantity = x.Quantity,
+                      Total = x.Total
                   })
-                  .FirstOrDefault();
+                  .ToList();
             return res;
         }
     }

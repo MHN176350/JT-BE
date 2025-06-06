@@ -28,7 +28,7 @@ namespace BE.DAO
         }
         public bool UpdateItem(int itemId, long quantity)
         {
-            var item = _context.Items.Find(itemId);
+            var item = _context.Items.Find(itemId); 
             if (item == null) return false;
             item.Quantity = quantity;
             item.UpdatedAt = DateTime.Now;
@@ -41,12 +41,14 @@ namespace BE.DAO
            List<ItemResponse> items = _context.Items
                 .Where(i => i.StorageId == storageId)
                 .Include(i => i.Product)
+                .Include(i => i.ImportItems)
                 .Select(i => new ItemResponse
                 {
                     Id = i.Id,
                     quantity = i.Quantity,
                     createdAt = i.CreatedAt,
                     updatedAt = i.UpdatedAt,
+                    unitPrice = i.ImportItems.FirstOrDefault(x => x.Invoice.CreatedDate == i.ImportItems.Max(y => y.Invoice.CreatedDate)).UnitPrice,
                     productName = i.Product.Name,
                     productImage = i.Product.Image,
                     totalAmount = i.TotalAmount
