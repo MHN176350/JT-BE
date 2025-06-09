@@ -1,11 +1,9 @@
 ﻿    namespace BE.Models.DTO.Request
 {
-    public class UpdateUserRequest
+    public class ChangePasswordRequest
     {
-        public string Address {  get; set; }
-        public bool IsAdmin {  get; set; }
-        public string PhoneNumber {  get; set; }
-        public string Avater { get; set; }
-
+        public int Id { get; set; }
+        public string OldPassword { get; set; }
+        public string NewPassword { get; set; }
     }
 }

@@ -17,6 +17,50 @@ namespace BE.Services.Impl
             this.sysUserDAO = sysUserDAO;
             JWTServices = jwt ?? throw new ArgumentNullException(nameof(jwt));
         }
+
+        public async Task<IActionResult> ChangePass(ChangePasswordRequest changePasswordRequest)
+        {
+            if(changePasswordRequest.OldPassword.IsNullOrEmpty() || changePasswordRequest.NewPassword.IsNullOrEmpty())
+            {
+                return new OkObjectResult(new ResponseFormat
+                {
+                    statusCode = 400,
+                    Message = "Old password and new password cannot be empty."
+                });
+            }
+            
+
+            var result = await sysUserDAO.ChangePassword(changePasswordRequest.Id, changePasswordRequest.OldPassword, changePasswordRequest.NewPassword);
+            if (result)
+            {
+                return new OkObjectResult(new ResponseFormat
+                {
+                    statusCode = 200,
+                    Message = "Password changed successfully."
+                });
+            }
+            return new OkObjectResult(new ResponseFormat
+            {
+                statusCode = 500,
+                Message = "Password change failed."
+            });
+        }
+
+        public async Task<IActionResult> LockUser(int userId)
+        {
+         if(sysUserDAO.LockUser(userId))
+            return new OkObjectResult(new ResponseFormat
+            {
+                statusCode = 200,
+                Message = "User locked successfully."
+            });
+         return new OkObjectResult(new ResponseFormat
+                {
+                    statusCode = 500,
+                    Message = "Failed to lock user."
+                });
+        }
+
         public async Task<IActionResult> LoginAsync(LoginRequest request)
         {
             if (request.Username.IsNullOrEmpty() || request.Password.IsNullOrEmpty())
@@ -79,6 +123,32 @@ namespace BE.Services.Impl
                 statusCode = 500,
                 Message = "Registration failed."
             }   );
+        }
+
+        public async Task<IActionResult> UpdateProfile(UpdateProfileRequest updateProfileRequest)
+        {
+            if(updateProfileRequest.Id <= 0 || updateProfileRequest.Avatar.IsNullOrEmpty()) 
+            {
+                return new OkObjectResult(new ResponseFormat
+                {
+                    statusCode = 400,
+                    Message = "Invalid profile data."
+                });
+            }
+            var result = sysUserDAO.UpdateProfile(updateProfileRequest);
+            if (result)
+            {
+                return new OkObjectResult(new ResponseFormat
+                {
+                    statusCode = 200,
+                    Message = "Profile updated successfully."
+                });
+            }
+            return new OkObjectResult(new ResponseFormat
+            {
+                statusCode = 500,
+                Message = "Profile update failed."
+            });
         }
     }
 }

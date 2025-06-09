@@ -1,5 +1,7 @@
 ﻿using BE.Context;
+using BE.Models.DTO.Request;
 using BE.Models.Entities;
+using BE.Services.Interfaces;
 using BE.Ultility;
 
 namespace BE.DAO
@@ -65,6 +67,51 @@ namespace BE.DAO
             user.LastLogin = DateTime.Now;
             Update(user); 
             return user;
+        }
+
+        
+
+        internal async Task<bool> ChangePassword(int id, string oldPassword, string newPassword)
+        {
+          const int minPasswordLength = 6;
+            if (newPassword.Length < minPasswordLength)
+            {
+                throw new ArgumentException($"New password must be at least {minPasswordLength} characters long.");
+            }
+            var user = await jtContext.SysUsers.FindAsync(id);
+            if (user == null)
+            {
+                return false;
+            }
+            if (!PasswordHasher.VerifyPassword(oldPassword, user.Password))
+            {
+                return false;
+            }
+            user.Password = PasswordHasher.HashPassword(newPassword);
+           return jtContext.SaveChanges() > 0;  
+        }
+
+        internal bool LockUser(int userId)
+        {
+           SysUser u=jtContext.SysUsers.Find(userId);
+            if (u == null)
+            {
+                return false;
+            }
+            if (u.IsActive) { u.IsActive = false; } else { u.IsActive = true; } 
+            jtContext.SysUsers.Update(u);
+            return jtContext.SaveChanges() > 0;
+        }
+
+        internal bool UpdateProfile(UpdateProfileRequest updateProfileRequest)
+        {
+           SysUser u=jtContext.SysUsers.FirstOrDefault(x=>x.Id==updateProfileRequest.Id);
+            if (u == null)
+            {
+                return false;
+            }
+            u.Avatar=updateProfileRequest.Avatar;
+            return jtContext.SaveChanges() > 0;
         }
     }
 }

@@ -29,6 +29,21 @@ namespace BE.Controllers
         //{
         //    NotImplementedException
         //}
+        [HttpPost("lock")]
+        public Task<IActionResult> LockSwitch(int id)
+        {
+            return sysUserService.LockUser(id);
+        }
+        [HttpPost("changePassword")]
 
+        public Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest changePasswordRequest)
+        {
+            return sysUserService.ChangePass(changePasswordRequest);
+        }
+        [HttpPost("updateProfile")]
+        public Task<IActionResult> updateProfile([FromBody] UpdateProfileRequest request)
+        {
+            return sysUserService.UpdateProfile(request);
+        }
     }
 }

@@ -5,7 +5,10 @@ namespace BE.Services.Interfaces
 {
     public interface ISysUser
     {
-        public Task<IActionResult> LoginAsync(LoginRequest request);
-        public Task<IActionResult> Register(RegisterRequest request);
+        Task<IActionResult> LoginAsync(LoginRequest request);
+        Task<IActionResult> Register(RegisterRequest request);
+        Task<IActionResult> ChangePass(ChangePasswordRequest changePasswordRequest);
+        Task<IActionResult> LockUser(int userId);
+        Task<IActionResult> UpdateProfile(UpdateProfileRequest updateProfileRequest);
     }
 }
