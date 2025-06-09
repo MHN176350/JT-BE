@@ -35,6 +35,7 @@ namespace BE.DAO
                 CreatedDate = DateTime.Now,
                 LastLogin = DateTime.Now,
                 IsAdmin = false,
+                IsActive = true,
             };
             jtContext.SysUsers.Add(user);
             return jtContext.SaveChanges() > 0; 
@@ -56,7 +57,7 @@ namespace BE.DAO
         public SysUser Login(string username, string password)
         {
             
-            var user = jtContext.SysUsers.FirstOrDefault(u => u.Username == username);
+            var user = jtContext.SysUsers.FirstOrDefault(u => u.Username == username&&u.IsActive);
             if (user == null||!PasswordHasher.VerifyPassword(password,user.Password))
             {
                 return null;

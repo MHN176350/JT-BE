@@ -22,6 +22,7 @@ public partial class SysUser
     public string Avatar { get; set; } = null!;
 
     public bool IsAdmin { get; set; }
+    public bool IsActive {  get; set; }
 
     public virtual ICollection<ExportInvoice> ExportInvoices { get; set; } = new List<ExportInvoice>();
 

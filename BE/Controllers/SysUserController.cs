@@ -24,6 +24,11 @@ namespace BE.Controllers
         {
             return sysUserService.Register(request);
         }
+        //[HttpPost("ChangeRole")]
+        //public Task<IActionResult> UpdateUser([FromBody] UpdateUserRequest updateUserRequest  )
+        //{
+        //    NotImplementedException
+        //}
 
     }
 }

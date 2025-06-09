@@ -336,6 +336,7 @@ public partial class JtContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("first_name");
             entity.Property(e => e.IsAdmin).HasColumnName("isAdmin");
+            entity.Property(e => e.IsActive).HasColumnName("isActive");
             entity.Property(e => e.LastLogin)
                 .HasColumnType("datetime")
                 .HasColumnName("last_login");

@@ -50,35 +50,35 @@ namespace BE.Services.Impl
             return new OkObjectResult(new ResponseFormat
             {
                 statusCode = 401,
-                Message = "Invalid username or password."
+                Message = "Invalid username or password ."
             });
         }
 
-        public Task<IActionResult> Register(RegisterRequest request)
+        public  async Task<IActionResult> Register(RegisterRequest request)
         {
            if(request.firstName.IsNullOrEmpty() || request.lastName.IsNullOrEmpty() || 
               request.username.IsNullOrEmpty() || request.password.IsNullOrEmpty())
             {
-                return Task.FromResult<IActionResult>(new OkObjectResult(new ResponseFormat
+                return new OkObjectResult(new ResponseFormat
                 {
                     statusCode = 400,
                     Message = "All fields are required."
-                }));
+                });
             }
             var result = sysUserDAO.Add(request.firstName, request.lastName, request.username, request.password);
             if (result)
             {
-                return Task.FromResult<IActionResult>(new OkObjectResult(new ResponseFormat
+                return new OkObjectResult(new ResponseFormat
                 {
                     statusCode = 201,
                     Message = "Registration successful."
-                }));
+                });
             }
-            return Task.FromResult<IActionResult>(new OkObjectResult(new ResponseFormat
+            return new OkObjectResult(new ResponseFormat
             {
                 statusCode = 500,
                 Message = "Registration failed."
-            }));
+            }   );
         }
     }
 }
