@@ -10,5 +10,7 @@ namespace BE.Services.Interfaces
         Task<IActionResult> ChangePass(ChangePasswordRequest changePasswordRequest);
         Task<IActionResult> LockUser(int userId);
         Task<IActionResult> UpdateProfile(UpdateProfileRequest updateProfileRequest);
+        Task<IActionResult> GetAllUser();
+        Task<IActionResult> ChangeProfilePicture( string profilePicture);
     }
 }

@@ -9,9 +9,11 @@ namespace BE.DAO
     public class SysUserDAO
     {
         private readonly JtContext jtContext;
-        public SysUserDAO(JtContext context)
+        private readonly StorageServices storageServices;
+        public SysUserDAO(JtContext context, StorageServices storageServices)
         {
             jtContext = context;
+            this.storageServices = storageServices;
         }
         public SysUser? GetById(int id)
         {
@@ -113,5 +115,37 @@ namespace BE.DAO
             u.Avatar=updateProfileRequest.Avatar;
             return jtContext.SaveChanges() > 0;
         }
+
+        internal object GetAllUsers()
+        {
+            return jtContext.SysUsers.Select(u => new
+            {
+                u.Id,
+                u.FirstName,
+                u.LastName,
+                u.Username,
+                u.Avatar,
+                u.IsAdmin,
+                u.IsActive,
+                u.CreatedDate,
+                u.LastLogin
+            }).ToList();
+        }
+
+        internal async Task<string> UpdateProfilePicture(int usId, string profilePicture)
+        {
+            string url = await storageServices.upLoadImg(usId, profilePicture);
+
+            var user = await jtContext.SysUsers.FindAsync(usId);
+            if (user != null)
+            {
+                user.Avatar = url;
+                await jtContext.SaveChangesAsync();
+                return await storageServices.GetImageUrl(user.Avatar);
+                
+            }
+            return null;
+        }
     }
 }
+                

@@ -43,7 +43,7 @@ builder.Services.AddScoped<ICategory, CategoryImpl>();
 builder.Services.AddScoped<IProduct, ProductImpl>();
 
 builder.Services.AddScoped<JWTServices>();
-
+builder.Services.AddScoped<StorageServices>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy", policy =>

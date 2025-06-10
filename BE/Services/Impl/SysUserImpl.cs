@@ -12,10 +12,14 @@ namespace BE.Services.Impl
     {
         private readonly SysUserDAO sysUserDAO;
         private readonly JWTServices JWTServices;
-        public SysUserImpl(SysUserDAO sysUserDAO, JWTServices jwt)
+        private readonly UserServices userServices;
+        private readonly StorageServices storageService;
+        public SysUserImpl(SysUserDAO sysUserDAO, JWTServices jwt, UserServices us, StorageServices storage)
         {
             this.sysUserDAO = sysUserDAO;
             JWTServices = jwt ?? throw new ArgumentNullException(nameof(jwt));
+            userServices = us ?? throw new ArgumentNullException(nameof(us));
+            storageService = storage ?? throw new ArgumentNullException(nameof(storage));
         }
 
         public async Task<IActionResult> ChangePass(ChangePasswordRequest changePasswordRequest)
@@ -28,9 +32,9 @@ namespace BE.Services.Impl
                     Message = "Old password and new password cannot be empty."
                 });
             }
-            
+            int usId = int.Parse(userServices.GetUserId()??"0");
 
-            var result = await sysUserDAO.ChangePassword(changePasswordRequest.Id, changePasswordRequest.OldPassword, changePasswordRequest.NewPassword);
+            var result = await sysUserDAO.ChangePassword(usId, changePasswordRequest.OldPassword, changePasswordRequest.NewPassword);
             if (result)
             {
                 return new OkObjectResult(new ResponseFormat
@@ -43,6 +47,54 @@ namespace BE.Services.Impl
             {
                 statusCode = 500,
                 Message = "Password change failed."
+            });
+        }
+
+        public async Task<IActionResult> ChangeProfilePicture(string profilePicture)
+        {
+            int usId = int.Parse(userServices.GetUserId()??"0");
+            if (profilePicture.IsNullOrEmpty()) {
+                return new OkObjectResult(new ResponseFormat
+                {
+                    statusCode = 400,
+                    Message = "Profile picture cannot be empty."
+                });
+            }
+
+            var result = await sysUserDAO.UpdateProfilePicture(usId, profilePicture);
+            if (!result.IsNullOrEmpty())
+            {
+                return new OkObjectResult(new ResponseFormat
+                {
+                    statusCode = 200,
+                    Message = "Profile picture updated successfully.",
+                    Data = result
+                });
+            }
+            return new OkObjectResult(new ResponseFormat
+            {
+                statusCode = 500,
+                Message = "Failed to update profile picture."
+            });
+            
+        }
+
+        public async Task<IActionResult> GetAllUser()
+        {
+            Object result = sysUserDAO.GetAllUsers();
+            if (result is null || !((List<object>)result).Any())
+            {
+                return new OkObjectResult(new ResponseFormat
+                {
+                    statusCode = 404,
+                    Message = "No users found."
+                });
+            }
+            return new OkObjectResult(new ResponseFormat
+            {
+                statusCode = 200,
+                Message = "User list retrieved successfully.",
+                Data = sysUserDAO.GetAllUsers()
             });
         }
 
@@ -82,13 +134,14 @@ namespace BE.Services.Impl
                     Message = "Login successful.",
                     Data = new LoginResponse
                     {
+                        UserName = user.Username,
                         FirstName = user.FirstName,
                         LastName = user.LastName,
-                        Avatar = user.Avatar,
+                        Avatar = await storageService.GetImageUrl(user.Avatar),
                         Token = accessToken,
                         LastLogin = user.LastLogin
                     }
-                });
+                } );    
             }
 
             return new OkObjectResult(new ResponseFormat
@@ -98,7 +151,7 @@ namespace BE.Services.Impl
             });
         }
 
-        public  async Task<IActionResult> Register(RegisterRequest request)
+        public async Task<IActionResult> Register(RegisterRequest request)
         {
            if(request.firstName.IsNullOrEmpty() || request.lastName.IsNullOrEmpty() || 
               request.username.IsNullOrEmpty() || request.password.IsNullOrEmpty())
@@ -122,7 +175,7 @@ namespace BE.Services.Impl
             {
                 statusCode = 500,
                 Message = "Registration failed."
-            }   );
+            });
         }
 
         public async Task<IActionResult> UpdateProfile(UpdateProfileRequest updateProfileRequest)
@@ -150,5 +203,6 @@ namespace BE.Services.Impl
                 Message = "Profile update failed."
             });
         }
+
     }
 }

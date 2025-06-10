@@ -38,12 +38,22 @@ namespace BE.Controllers
 
         public Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest changePasswordRequest)
         {
-            return sysUserService.ChangePass(changePasswordRequest);
+          return sysUserService.ChangePass(changePasswordRequest);
         }
         [HttpPost("updateProfile")]
         public Task<IActionResult> updateProfile([FromBody] UpdateProfileRequest request)
         {
             return sysUserService.UpdateProfile(request);
+        }
+        [HttpGet("getalluser")]
+        public Task<IActionResult> GetAllUser()
+        {
+            return sysUserService.GetAllUser();
+        }
+        [HttpPost("changeProfilePicture")]
+        public Task<IActionResult> ChangeProfilePicture([FromBody] ChangePictureRequest profilePicture)
+        {
+            return sysUserService.ChangeProfilePicture(profilePicture.PictureContent);
         }
     }
 }
