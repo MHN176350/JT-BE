@@ -9,6 +9,7 @@ namespace BE.Controllers
  
     [Route("api/export")]
     [ApiController]
+    [Authorize]
     public class ExportController : ControllerBase
     {
         private readonly IExport _export;

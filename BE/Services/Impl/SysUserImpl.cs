@@ -202,6 +202,7 @@ namespace BE.Services.Impl
                 statusCode = 500,
                 Message = "Profile update failed."
             });
+
         }
 
     }

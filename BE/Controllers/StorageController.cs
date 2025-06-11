@@ -8,6 +8,7 @@ namespace BE.Controllers
     [Authorize]
     [Route("api/warehouse")]
     [ApiController]
+    [Authorize]
     public class StorageController : ControllerBase
     {
         private readonly IStorage _storageService;
@@ -26,10 +27,19 @@ namespace BE.Controllers
             return await _storageService.GetStorageById();
         }
         [HttpPost("update")]
-        public async Task<IActionResult> UpdateStorage([FromBody]UpdateStorageRequest request)
+        public async Task<IActionResult> UpdateStorage([FromBody] UpdateStorageRequest request)
         {
             return await (_storageService.UpdateStorage(request));
         }
-
+        [HttpGet("members")]
+        public async Task<IActionResult> DisplayMember([FromQuery]int stId)
+        {
+            return await _storageService.GetStorageMember(stId);
+        }
+        [HttpPost("addMember")]
+        public async Task<IActionResult> AddMember([FromBody]AddStorageMemberRequest req)
+        {
+            return await _storageService.AddStorageMember(req);   
+        }
     }
 }

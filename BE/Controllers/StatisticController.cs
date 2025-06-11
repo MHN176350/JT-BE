@@ -1,4 +1,5 @@
 ﻿using BE.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,6 +7,7 @@ namespace BE.Controllers
 {
     [Route("api/stat")]
     [ApiController]
+    [Authorize]
     public class StatisticController : ControllerBase
     {
         private readonly IStatistic _statisticService;

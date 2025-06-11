@@ -9,6 +9,7 @@ namespace BE.Controllers
     [Authorize]
     [Route("api/product")]
     [ApiController]
+    [Authorize]
     public class ProductController : ControllerBase
     {
         private readonly IProduct _productService;

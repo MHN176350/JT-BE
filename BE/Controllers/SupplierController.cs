@@ -1,5 +1,6 @@
 ﻿using BE.Models.DTO.Request;
 using BE.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,6 +8,7 @@ namespace BE.Controllers
 {
     [Route("api/supplier")]
     [ApiController]
+    [Authorize]
     public class SupplierController : ControllerBase
     {
         private readonly ISupplier supplier;

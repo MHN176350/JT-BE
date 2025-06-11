@@ -20,14 +20,20 @@ namespace BE.DAO
             var cat= _context.Categories.ToList();
             foreach (var category in cat)
             {
+                
+                double exportSum = _context.ExportInvoices
+                    .Where(e => e.StorageId == sId && e.CreatedDate >= startDate && e.CreatedDate <= endDate && e.ExportItems
+                    .Any(i => i.Item.Product.CatId == category.Id))
+                    .Sum(e => e.ExportItems.Sum(i => i.UnitPrice * i.Quantity));
+                double importSum = _context.ImportInvoices
+                    .Where(i => i.StorageId == sId && i.CreatedDate >= startDate && i.CreatedDate <= endDate && i.ImportItems
+                    .Any(it => it.Item.Product.CatId == category.Id))
+                    .Sum(i => i.ImportItems.Sum(it => it.UnitPrice * it.Quantity));
                 res.Add(new BarChartResponse
                 {
                     Category = category.Name,
-                    Revenue = _context.ExportInvoices.Include(e => e.ExportItems).ThenInclude(i => i.Item.ImportItems).Where(e => e.StorageId == sId && e.CreatedDate >= startDate && e.CreatedDate <= endDate && e.ExportItems.Any(i => i.Item.Product.CatId == category.Id))
-                        .Sum(e => e.ExportItems.Sum(i => i.Quantity * (i.UnitPrice - i.Item.ImportItems.FirstOrDefault().UnitPrice))),
-
-
-                });
+                    Revenue = exportSum - importSum
+                }); 
             }
             return res;
         }

@@ -8,5 +8,7 @@ namespace BE.Services.Interfaces
         public Task<IActionResult> CreateStorage(CreateStorageRequest request);
         public Task<IActionResult> GetStorageById();
         Task<IActionResult> UpdateStorage(UpdateStorageRequest upd);
+        Task<IActionResult> GetStorageMember(int stId);
+        Task<IActionResult> AddStorageMember(AddStorageMemberRequest req);
     }
 }

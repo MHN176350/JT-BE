@@ -14,7 +14,25 @@ namespace BE.DAO
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
-        
+
+       
+
+        internal bool AddStorageMember(AddStorageMemberRequest req)
+        {
+            StorageUser user = new StorageUser()
+ ;
+            user.UserId=req.usId ;
+            user.RoleId = 2;
+            user.StorageId = req.stId;
+            if (_context.StorageUsers.Any(x => x.UserId == user.UserId && x.StorageId == user.StorageId))
+            {
+                return false;
+            }
+            _context.StorageUsers.Add(user);
+            return _context.SaveChanges()>0;
+        }
+     
+
         internal bool CreateStorage(string location, string code, int usId)
         {
             if(_context.Storages.Any(x => x.Code == code))
@@ -55,6 +73,18 @@ namespace BE.DAO
                 ItemCount = _context.Items.Count(i => i.StorageId == s.StorageId),
                 UpdatedDate = s.Storage.UpdatedDate
             }).ToList();
+        }
+
+        internal object GetStorageMember(int stId)
+        {
+            List<StorageMemberResponse> res = _context.StorageUsers.Where(x => x.StorageId == stId).Select(x => new StorageMemberResponse
+            {
+                Id = x.Id,
+                FullName = x.User.FirstName + " " + x.User.LastName,
+                UserName = x.User.Username,
+                Privilage = x.RoleId == 1 ? "Owner" : "Manager",
+            }).ToList();
+            return res;
         }
 
         internal bool updateStorage(UpdateStorageRequest req, int uid)

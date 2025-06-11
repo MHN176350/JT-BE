@@ -20,6 +20,33 @@ namespace BE.Services.Impl
             _storageDAO = storageDAO;
             _userServices = userServices;
         }
+
+        public async Task<IActionResult> AddStorageMember(AddStorageMemberRequest req)
+        {
+            if(req == null)
+            {
+                return new OkObjectResult(new ResponseFormat
+                {
+                    statusCode = 400,
+                    Message= "Invalid Request"
+                });
+
+            }
+            if(_storageDAO.AddStorageMember(req))
+            {
+                return new OkObjectResult(new ResponseFormat
+                {
+                    statusCode = 200,
+                    Message = "Member Added Successful"
+                });
+            }
+            return new OkObjectResult(new ResponseFormat
+            {
+                statusCode = 500,
+                Message = "Internal Server error"
+            });
+        }
+
         public async Task<IActionResult> CreateStorage(CreateStorageRequest request)
         {
             if (request.Code.IsNullOrEmpty() || request.Location.IsNullOrEmpty())
@@ -77,6 +104,24 @@ namespace BE.Services.Impl
             });
 
 
+        }
+
+        public async Task<IActionResult> GetStorageMember(int stId)
+        {
+            if (stId <= 0)
+            {
+                return new OkObjectResult(new ResponseFormat
+                {
+                    statusCode = 400,
+                    Message = "Warehouse ID cannot be empty"
+                });
+
+            }return new OkObjectResult(new ResponseFormat
+            {
+                Data = _storageDAO.GetStorageMember(stId),
+                Message = "Displaying User Data",
+                statusCode = 200,
+            });
         }
 
         public async Task<IActionResult> UpdateStorage(UpdateStorageRequest upd)
