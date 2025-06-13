@@ -47,7 +47,8 @@ namespace BE.DAO
                 res.Add(new PieChartResponse
                 {
                     ProductName = prod.Name,
-                    Quantity = _context.ExportInvoices
+                    Quantity = _context
+                    .ExportInvoices
                         .Where(e =>e.StorageId==sId&& e.CreatedDate >= startDate && e.CreatedDate <= endDate && e.ExportItems.Any(i => i.Item.Product.Id == prod.Id))
                         .Sum(e => e.ExportItems.Sum(i => i.Quantity))
                 });
