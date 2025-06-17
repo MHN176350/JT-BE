@@ -81,8 +81,8 @@ namespace BE.Services.Impl
 
         public async Task<IActionResult> GetAllUser()
         {
-            Object result = sysUserDAO.GetAllUsers();
-            if (result is null || !((List<object>)result).Any())
+            List<UserResponse> data = await sysUserDAO.GetAllUsersAsync();
+            if (data is null)
             {
                 return new OkObjectResult(new ResponseFormat
                 {
@@ -90,11 +90,12 @@ namespace BE.Services.Impl
                     Message = "No users found."
                 });
             }
+           
             return new OkObjectResult(new ResponseFormat
             {
                 statusCode = 200,
                 Message = "User list retrieved successfully.",
-                Data = sysUserDAO.GetAllUsers()
+                Data = data
             });
         }
 

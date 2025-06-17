@@ -16,9 +16,6 @@ namespace BE.Ultility
             return _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         }
 
-        internal bool IsAuthenticated()
-        {
-            return _httpContextAccessor.HttpContext?.User?.Identity?.IsAuthenticated ?? false;
-        }
+
     }
 }

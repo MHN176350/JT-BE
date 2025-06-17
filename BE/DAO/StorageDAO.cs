@@ -10,9 +10,11 @@ namespace BE.DAO
     public class StorageDAO
     {
         private readonly JtContext _context;
-        public StorageDAO(JtContext context)
+        private readonly StorageServices _storageServices;
+        public StorageDAO(JtContext context, StorageServices storageServices)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
+            _storageServices = storageServices ?? throw new ArgumentNullException(nameof(storageServices));
         }
 
        
@@ -20,10 +22,11 @@ namespace BE.DAO
         internal bool AddStorageMember(AddStorageMemberRequest req)
         {
             StorageUser user = new StorageUser()
- ;
-            user.UserId=req.usId ;
-            user.RoleId = 2;
-            user.StorageId = req.stId;
+            {
+                UserId = req.UsId,
+                RoleId = req.RoleId,
+                StorageId = req.StId
+            };
             if (_context.StorageUsers.Any(x => x.UserId == user.UserId && x.StorageId == user.StorageId))
             {
                 return false;
@@ -31,7 +34,17 @@ namespace BE.DAO
             _context.StorageUsers.Add(user);
             return _context.SaveChanges()>0;
         }
-     
+
+        internal bool ChangeRole(ChangeRoleRequest req)
+        {
+           StorageUser? user = _context.StorageUsers.FirstOrDefault(x => x.Id == req.Id);
+            if (user != null)
+            {
+                user.RoleId = req.RoleId;
+                return _context.SaveChanges() > 0;
+            }
+            return false;
+        }
 
         internal bool CreateStorage(string location, string code, int usId)
         {
@@ -75,17 +88,31 @@ namespace BE.DAO
             }).ToList();
         }
 
-        internal object GetStorageMember(int stId)
+        internal object GetStorageCodes()
         {
-            List<StorageMemberResponse> res = _context.StorageUsers.Where(x => x.StorageId == stId).Select(x => new StorageMemberResponse
+            List<string> codes = _context.Storages.Select(x => x.Code).ToList();
+            return codes;
+        }
+
+        internal List<StorageMemberResponse> GetStorageMember(string Code)
+        {
+            List<StorageMemberResponse> res = new List<StorageMemberResponse>();
+            var items = _context.StorageUsers.Include(x => x.User).Where(x => x.Storage.Code.ToLower().Equals(Code.ToLower())).ToList();
+            foreach (var item in items)
             {
-                Id = x.Id,
-                FullName = x.User.FirstName + " " + x.User.LastName,
-                UserName = x.User.Username,
-                Privilage = x.RoleId == 1 ? "Owner" : "Manager",
-            }).ToList();
+                res.Add(new StorageMemberResponse
+                {
+                    Id = item.Id,
+                    FullName = item.User.FirstName + " " + item.User.LastName,
+                    UserName = item.User.Username,
+                    Privilage = item.RoleId == 1 ? "Owner" : "Manager",
+                    Avatar = _storageServices.GetImageUrl(item.User.Avatar).Result,
+                    LastLogin = item.User.LastLogin
+                });
+            }
             return res;
         }
+            
 
         internal bool updateStorage(UpdateStorageRequest req, int uid)
         {
@@ -101,5 +128,6 @@ namespace BE.DAO
             }
             return false;
         }
+
     }
 }

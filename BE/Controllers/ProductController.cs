@@ -17,7 +17,7 @@ namespace BE.Controllers
         {
             _productService = productService ?? throw new ArgumentNullException(nameof(productService));
         }
-        [HttpPost("create")]
+        [HttpPost("create")]    
         public async Task<IActionResult> CreateProductAsync([FromBody] CreateProductRequest request)
         {
             return await _productService.CreateProductAsync(request);

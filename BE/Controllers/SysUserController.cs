@@ -25,12 +25,8 @@ namespace BE.Controllers
         {
             return sysUserService.Register(request);
         }
-        //[HttpPost("ChangeRole")]
-        //public Task<IActionResult> UpdateUser([FromBody] UpdateUserRequest updateUserRequest  )
-        //{
-        //    NotImplementedException
-        //}
-        [HttpPost("lock")]
+     
+        [HttpPost("lock/{id}")]
         [Authorize(Roles = "Admin")]
         public Task<IActionResult> LockSwitch(int id)
         {

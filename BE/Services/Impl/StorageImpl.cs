@@ -47,6 +47,30 @@ namespace BE.Services.Impl
             });
         }
 
+        public async Task<IActionResult> ChangeRole(ChangeRoleRequest req)
+        {
+            if (req == null) {
+                return new OkObjectResult(new ResponseFormat
+                {
+                    Message = "Invalid request",
+                    statusCode = 400,
+                });
+            }
+            if (_storageDAO.ChangeRole(req))
+            {
+                return new OkObjectResult(new ResponseFormat
+                {
+                    statusCode = 200,
+                    Message = "Role changed successfully."
+                });
+            }
+            return new OkObjectResult(new ResponseFormat
+            {
+                statusCode = 500,
+                Message = "Failed to change role."
+            });
+        }
+
         public async Task<IActionResult> CreateStorage(CreateStorageRequest request)
         {
             if (request.Code.IsNullOrEmpty() || request.Location.IsNullOrEmpty())
@@ -75,6 +99,26 @@ namespace BE.Services.Impl
                 });
             }
         }
+
+        public Task<IActionResult> GetStCode()
+        {
+            var res=_storageDAO.GetStorageCodes();
+            if(res is null)
+            {
+                return Task.FromResult<IActionResult>(new OkObjectResult(new ResponseFormat
+                {
+                    statusCode = 404,
+                    Message = "No storage codes found."
+                }));
+            }
+            return Task.FromResult<IActionResult>(new OkObjectResult(new ResponseFormat
+            {
+                statusCode = 200,
+                Message = "Storage codes retrieved successfully.",
+                Data =res
+            }));
+        }
+
         public async Task<IActionResult> GetStorageById()
         {
 
@@ -106,9 +150,9 @@ namespace BE.Services.Impl
 
         }
 
-        public async Task<IActionResult> GetStorageMember(int stId)
+        public async Task<IActionResult> GetStorageMember(string Code)
         {
-            if (stId <= 0)
+            if (Code is null)
             {
                 return new OkObjectResult(new ResponseFormat
                 {
@@ -118,7 +162,7 @@ namespace BE.Services.Impl
 
             }return new OkObjectResult(new ResponseFormat
             {
-                Data = _storageDAO.GetStorageMember(stId),
+                Data = _storageDAO.GetStorageMember(Code),
                 Message = "Displaying User Data",
                 statusCode = 200,
             });

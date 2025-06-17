@@ -5,10 +5,12 @@ namespace BE.Services.Interfaces
 {
     public interface IStorage
     {
-        public Task<IActionResult> CreateStorage(CreateStorageRequest request);
-        public Task<IActionResult> GetStorageById();
+         Task<IActionResult> CreateStorage(CreateStorageRequest request);
+         Task<IActionResult> GetStorageById();
         Task<IActionResult> UpdateStorage(UpdateStorageRequest upd);
-        Task<IActionResult> GetStorageMember(int stId);
+        Task<IActionResult> GetStorageMember(string Code);
         Task<IActionResult> AddStorageMember(AddStorageMemberRequest req);
+        Task<IActionResult> ChangeRole(ChangeRoleRequest req);
+        Task<IActionResult> GetStCode();
     }
 }

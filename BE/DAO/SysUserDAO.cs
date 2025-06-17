@@ -1,5 +1,6 @@
 ﻿using BE.Context;
 using BE.Models.DTO.Request;
+using BE.Models.DTO.Response;
 using BE.Models.Entities;
 using BE.Services.Interfaces;
 using BE.Ultility;
@@ -49,15 +50,7 @@ namespace BE.DAO
             jtContext.SysUsers.Update(user);
             jtContext.SaveChanges();
         }
-        public void Delete(int id)
-        {
-            var user = jtContext.SysUsers.Find(id);
-            if (user != null)
-            {
-                jtContext.SysUsers.Remove(user);
-                jtContext.SaveChanges();
-            }
-        }
+      
         public SysUser Login(string username, string password)
         {
             
@@ -116,20 +109,25 @@ namespace BE.DAO
             return jtContext.SaveChanges() > 0;
         }
 
-        internal object GetAllUsers()
+        internal async Task<List<UserResponse>> GetAllUsersAsync()
         {
-            return jtContext.SysUsers.Select(u => new
-            {
-                u.Id,
-                u.FirstName,
-                u.LastName,
-                u.Username,
-                u.Avatar,
-                u.IsAdmin,
-                u.IsActive,
-                u.CreatedDate,
-                u.LastLogin
-            }).ToList();
+            List<UserResponse>res=new List<UserResponse> ();
+            foreach (var u in jtContext.SysUsers) {
+                UserResponse user = new UserResponse
+                {
+                    Id = u.Id,
+                    Avatar = await storageServices.GetImageUrl(u.Avatar),
+                    UserName = u.Username,
+                    LastName = u.LastName,
+                    FirstName = u.FirstName,
+                    IsActive = u.IsActive,
+                    IsAdmin = u.IsAdmin,
+                    CreatedDate = u.CreatedDate,
+                    LastLogin = u.LastLogin,
+                };
+                res.Add(user);
+            }
+            return res;
         }
 
         internal async Task<string> UpdateProfilePicture(int usId, string profilePicture)

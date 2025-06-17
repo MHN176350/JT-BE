@@ -32,14 +32,24 @@ namespace BE.Controllers
             return await (_storageService.UpdateStorage(request));
         }
         [HttpGet("members")]
-        public async Task<IActionResult> DisplayMember([FromQuery]int stId)
+        public async Task<IActionResult> DisplayMember([FromQuery] string Code)
         {
-            return await _storageService.GetStorageMember(stId);
+            return await _storageService.GetStorageMember(Code);
         }
         [HttpPost("addMember")]
-        public async Task<IActionResult> AddMember([FromBody]AddStorageMemberRequest req)
+        public async Task<IActionResult> AddMember([FromBody] AddStorageMemberRequest req)
         {
-            return await _storageService.AddStorageMember(req);   
+            return await _storageService.AddStorageMember(req);
+        }
+        [HttpPost("crole")]
+        public async Task<IActionResult> ChangeRole(ChangeRoleRequest req)
+        {
+            return await _storageService.ChangeRole(req);
+        }
+        [HttpGet("getcode")]
+        public async Task<IActionResult> GetCodes()
+        {
+            return await _storageService.GetStCode();
         }
     }
 }
